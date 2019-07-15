@@ -71,3 +71,21 @@
   // go to here for color theme auto generation:
   // https://ionicframework.com/docs/theming/color-generator
 }
+
+.ios {
+  --ion-color-primary: #e737ff;
+  --ion-color-primary-rgb: 231,55,255;
+  --ion-color-primary-contrast: #000000;
+  --ion-color-primary-contrast-rgb: 0,0,0;
+  --ion-color-primary-shade: #cb30e0;
+  --ion-color-primary-tint: #e94bff;
+}
+
+.md {
+  --ion-color-primary: #a0ff37;
+  --ion-color-primary-rgb: 160,255,55;
+  --ion-color-primary-contrast: #000000;
+  --ion-color-primary-contrast-rgb: 0,0,0;
+  --ion-color-primary-shade: #8de030;
+  --ion-color-primary-tint: #aaff4b;
+}
