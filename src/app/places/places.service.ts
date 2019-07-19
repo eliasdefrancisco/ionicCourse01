@@ -78,4 +78,33 @@ export class PlacesService {
       })
     );
   }
+
+  updatePlace(
+    placeId: string,
+    title: string,
+    description: string,
+    price: number,
+    imageUrl: string
+  ) {
+    return this.places.pipe(
+      take(1),
+      delay(2000),
+      tap(places => {
+        const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
+        const updatedPlaces = [...places];
+        const oldPlace = updatedPlaces[updatedPlaceIndex];
+        updatedPlaces[updatedPlaceIndex] = new Place(
+          oldPlace.id,
+          title,
+          description,
+          imageUrl,
+          price,
+          oldPlace.availableFrom,
+          oldPlace.availableTo,
+          oldPlace.userId
+        );
+        this._places.next(updatedPlaces);
+      })
+    );
+  }
 }
