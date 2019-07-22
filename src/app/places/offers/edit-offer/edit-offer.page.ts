@@ -14,6 +14,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class EditOfferPage implements OnInit, OnDestroy {
   place: Place;
   form: FormGroup;
+  isLoading = false;
+  placeId: string;
   private placeSub: Subscription;
 
   constructor(
@@ -30,6 +32,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
+      this.placeId = paramMap.get('placeId');
+      this.isLoading = true;
       this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
         this.place = place;
         this.form = new FormGroup({
@@ -50,6 +54,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
             validators: [Validators.required]
           })
         });
+        this.isLoading = false;
       });
     });
   }

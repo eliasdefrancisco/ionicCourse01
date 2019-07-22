@@ -12,6 +12,7 @@ import { PlacesService } from '../../places.service';
 })
 export class OfferBookingsPage implements OnInit, OnDestroy {
   place: Place;
+  isLoading = false;
   private placeSub: Subscription;
 
   constructor(
@@ -20,6 +21,7 @@ export class OfferBookingsPage implements OnInit, OnDestroy {
     private placesService: PlacesService) { }
 
   ngOnInit() {
+    this.isLoading = true;
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('placeId')) {
         this.navCtrl.navigateBack('/places/tabs/offers');
@@ -27,6 +29,7 @@ export class OfferBookingsPage implements OnInit, OnDestroy {
       }
       this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
         this.place = place;
+        this.isLoading = false;
       });
     });
   }
