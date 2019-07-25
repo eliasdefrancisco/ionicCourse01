@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import Private from '../../../../private'; // This file is not in the repository !!!
@@ -9,15 +9,32 @@ import Private from '../../../../private'; // This file is not in the repository
   styleUrls: ['./map-modal.component.scss'],
 })
 export class MapModalComponent implements OnInit, AfterViewInit {
+  @ViewChild('map') mapElement: ElementRef;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private renderer: Renderer2
+  ) { }
 
   ngOnInit() {}
 
   ngAfterViewInit() {
     this.getGoogleMaps()
     .then(googleMaps => {
-      console.log(googleMaps);
+      const mapEl = this.mapElement.nativeElement;
+      const map = new googleMaps.Map(
+        mapEl,
+        {
+          center: {
+            lat: 52.360949,
+            lng: 4.885226
+          },
+          zoom: 16
+        }
+      );
+      googleMaps.event.addListenerOnce(map, 'idle', () => {
+        this.renderer.addClass(mapEl, 'visible');
+      });
     })
     .catch(err => {
       console.log(err);
