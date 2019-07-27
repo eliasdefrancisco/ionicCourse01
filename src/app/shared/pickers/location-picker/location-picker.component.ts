@@ -24,6 +24,7 @@ export class LocationPickerComponent implements OnInit {
       modalEl.onDidDismiss().then(modalData => {
         if (!modalData.data) { return; }
         this.getAddress(modalData.data.lat, modalData.data.lng).subscribe(address => {
+          console.log(address);
         });
       });
       modalEl.present();
@@ -35,7 +36,7 @@ export class LocationPickerComponent implements OnInit {
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${Private.googleMapsToken}`
       ).pipe(
         map(geoData => {
-          if (!geoData || !geoData.results || geoData.results.length === 0) { 
+          if (!geoData || !geoData.results || geoData.results.length === 0) {
             return null;
           }
           return geoData.results[0].formatted_address; // Only return one result
