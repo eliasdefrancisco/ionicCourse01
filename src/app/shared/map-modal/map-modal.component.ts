@@ -50,7 +50,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
           this.modalCtrl.dismiss(selectedCoords);
         });
       } else {
-        const marker = googleMaps.Marker({
+        const marker = new googleMaps.Marker({
           position: this.center,
           map,
           title: 'Picked Location'
