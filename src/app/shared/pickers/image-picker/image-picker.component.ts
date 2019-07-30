@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input } from '@angular/core';
 import { Plugins, Capacitor, CameraSource, CameraResultType } from '@capacitor/core';
 import { Platform } from '@ionic/angular';
 
@@ -10,6 +10,7 @@ import { Platform } from '@ionic/angular';
 export class ImagePickerComponent implements OnInit {
   @ViewChild('filePicker') filePickerRef: ElementRef<HTMLInputElement>;
   @Output() imagePick = new EventEmitter<string | File>();
+  @Input() showPreview = false;
   selectedImage: string;
   usePicker = false;
 
