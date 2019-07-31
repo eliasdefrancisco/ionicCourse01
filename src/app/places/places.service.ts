@@ -112,20 +112,30 @@ export class PlacesService {
     );
   }
 
+  uploadImage(image: File) {
+    const uploadData = new FormData();
+    uploadData.append('image', image);
+    return this.http.post<{imageUrl: string, imagePath: string}>(
+      'https://us-central1-backend-stuff.cloudfunctions.net/storeImage',
+      uploadData
+    );
+  }
+
   addPlace(
     title: string,
     description: string,
     price: number,
     dateFrom: Date,
     dateTo: Date,
-    location: PlaceLocation
+    location: PlaceLocation,
+    imageUrl: string
   ) {
     let generatedId: string;
     const newPlace = new Place(
       Math.random().toString(),
       title,
       description,
-      'https://www.hoteldekho.com/blog/wp-content/uploads/2017/12/Tourist-Places-in-India-For-First-Time-Travellers.jpg',
+      imageUrl,
       price,
       dateFrom,
       dateTo,
