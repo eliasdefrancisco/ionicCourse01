@@ -44,7 +44,9 @@ export class AuthPage implements OnInit {
     if (this.isLogin) {
       // TODO
     } else {
-      // TODO
+      this.authService.signup(email, password).subscribe(resData => {
+        console.log(resData);
+      });
     }
   }
 

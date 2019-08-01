@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import Private from '../../../private';
+
+interface AuthResponseData {
+  idToken: string;
+  email: string;
+  refreshToken: string;
+  expiresIn: string;
+  localId: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private _userIsAuthenticated = true;
-  private _userId = 'abd';
+  private _userIsAuthenticated = false;
+  private _userId = null;
 
   get userIsAuthenticated() {
     return this._userIsAuthenticated;
@@ -15,7 +25,13 @@ export class AuthService {
     return this._userId;
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  signup(email: string, password: string) {
+    return this.http.post<AuthResponseData>(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${
+        Private.firebaseApiKey}`, { email, password, returnSecureToken: true });
+  }
 
   login() {
     this._userIsAuthenticated = true;
