@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import Private from '../../../private';
 
-interface AuthResponseData {
+export interface AuthResponseData {
   idToken: string;
   email: string;
   refreshToken: string;
@@ -33,8 +33,9 @@ export class AuthService {
         Private.firebaseApiKey}`, { email, password, returnSecureToken: true });
   }
 
-  login() {
-    this._userIsAuthenticated = true;
+  login(email: string, password: string) {
+    return this.http.post<AuthResponseData>(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${
+      Private.firebaseApiKey}`, { email, password, returnSecureToken: true });
   }
 
   logout() {
