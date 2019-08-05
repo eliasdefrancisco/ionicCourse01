@@ -90,6 +90,7 @@ export class BookingService {
 
     fetchBookings() {
         return this.authService.userId.pipe(
+            take(1),
             switchMap(userId => {
                 return this.http.get<{[key: string]: BookingData}>(
                     `https://backend-stuff.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${userId}"`
