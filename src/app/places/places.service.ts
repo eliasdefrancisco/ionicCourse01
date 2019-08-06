@@ -28,45 +28,16 @@ export class PlacesService {
     return this._places.asObservable();
   }
 
-  // [
-  //   new Place(
-  //     'p1',
-  //     'Manhattan Mansion',
-  //     'In the heart of New York City.',
-  //     'https://imgs.6sqft.com/wp-content/uploads/2014/06/21042533/Carnegie-Mansion-nyc.jpg',
-  //     149.99,
-  //     new Date('2019-01-01'),
-  //     new Date('2019-12-31'),
-  //     'abc'
-  //   ),
-  //   new Place(
-  //     'p2',
-  //     'L\'Amour Toujours',
-  //     'A romantic place in Paris!',
-  //     'https://myldrwithafrenchman.files.wordpress.com/2017/01/eiffel_tower_in_paris__france_073036_.jpg?w=1118',
-  //     189.99,
-  //     new Date('2019-01-01'),
-  //     new Date('2019-12-31'),
-  //     'abc'
-  //   ),
-  //   new Place(
-  //     'p3',
-  //     'The Foggy Palace',
-  //     'Not your average city trip!',
-  //     'https://i1.trekearth.com/photos/138102/dsc_0681.jpg',
-  //     99.99,
-  //     new Date('2019-01-01'),
-  //     new Date('2019-12-31'),
-  //     'abc'
-  //   )
-  // ]
-
   constructor(private authService: AuthService, private http: HttpClient) { }
 
   fetchPlaces() {
-    return this.http
-    .get<{[key: string]: PlaceData}>('https://backend-stuff.firebaseio.com/offered-places.json')
-    .pipe(
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.get<{[key: string]: PlaceData}>(
+          `https://backend-stuff.firebaseio.com/offered-places.json?auth=${token}`
+        );
+      }),
       map(resData => {
         const places = [];
         for (const key in resData) {
@@ -93,9 +64,13 @@ export class PlacesService {
   }
 
   getPlace(id: string) {
-    return this.http.get<PlaceData>(
-      `https://backend-stuff.firebaseio.com/offered-places/${id}.json`
-    ).pipe(
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.get<PlaceData>(
+          `https://backend-stuff.firebaseio.com/offered-places/${id}.json?auth=${token}`
+        );
+      }),
       map(placeData => {
         return new Place(
           id,
@@ -115,9 +90,15 @@ export class PlacesService {
   uploadImage(image: File) {
     const uploadData = new FormData();
     uploadData.append('image', image);
-    return this.http.post<{imageUrl: string, imagePath: string}>(
-      'https://us-central1-backend-stuff.cloudfunctions.net/storeImage',
-      uploadData
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.post<{imageUrl: string, imagePath: string}>(
+          'https://us-central1-backend-stuff.cloudfunctions.net/storeImage',
+          uploadData,
+          { headers: { Authorization: 'Bearer ' + token } }
+        );
+      })
     );
   }
 
@@ -132,9 +113,16 @@ export class PlacesService {
   ) {
     let generatedId: string;
     let newPlace: Place;
+    let fetchedUserId: string;
     return this.authService.userId.pipe(
+      take(1),
       switchMap(userId => {
-        if (!userId) {
+        fetchedUserId = userId;
+        return this.authService.token;
+      }),
+      take(1),
+      switchMap(token => {
+        if (!fetchedUserId) {
           throw new Error('No user found!');
         }
         newPlace = new Place(
@@ -145,11 +133,11 @@ export class PlacesService {
           price,
           dateFrom,
           dateTo,
-          userId,
+          fetchedUserId,
           location
         );
         return this.http.post<{name: string}>(
-          'https://backend-stuff.firebaseio.com/offered-places.json',
+          `https://backend-stuff.firebaseio.com/offered-places.json?auth=${token}`,
           { ...newPlace, id: null}
         );
       }),
@@ -173,7 +161,13 @@ export class PlacesService {
     imageUrl: string
   ) {
     let updatedPlaces: Place[];
-    return this.places.pipe(
+    let fetchedToken: string;
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        fetchedToken = token;
+        return this.places;
+      }),
       take(1),
       switchMap(places => {
         if (!places || places.length <= 0) {
@@ -198,7 +192,7 @@ export class PlacesService {
           oldPlace.location
         );
         return this.http.put(
-          `https://backend-stuff.firebaseio.com/offered-places/${placeId}.json`,
+          `https://backend-stuff.firebaseio.com/offered-places/${placeId}.json?auth=${fetchedToken}`,
           { ...updatedPlaces[updatedPlaceIndex], id: null }
         );
       }),
