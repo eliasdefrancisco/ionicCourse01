@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">ionicCourse01</string>
     <string name="title_activity_main">ionicCourse01</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="fileprovider_authority">io.ionic.starter.fileprovider</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="package_name">com.elaya.ionicCourse01</string>
+    <string name="fileprovider_authority">com.elaya.ionicCourse01.fileprovider</string>
+    <string name="custom_url_scheme">com.elaya.ionicCourse01</string>
 </resources>
